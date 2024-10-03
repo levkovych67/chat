@@ -1,0 +1,47 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+
+group = 'com.meet'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// https://mvnrepository.com/artifact/org.telegram/telegrambots-spring-boot-starter
+	implementation group: 'org.telegram', name: 'telegrambots-spring-boot-starter', version: '6.6.0'
+
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.33' // Use the correct version
+
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+
+	implementation 'org.apache.commons:commons-collections4:4.4'
+
+	// Lombok dependencies
+	compileOnly 'org.projectlombok:lombok:1.18.24' // Lombok for reducing boilerplate code
+	annotationProcessor 'org.projectlombok:lombok:1.18.24' // Annotation processor for Lombok
+
+}
+
+
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
