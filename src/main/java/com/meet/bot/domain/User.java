@@ -1,7 +1,6 @@
 package com.meet.bot.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,5 +35,4 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER,mappedBy = "users")
     private Set<ChatRoom> chatRooms;
-
 }
