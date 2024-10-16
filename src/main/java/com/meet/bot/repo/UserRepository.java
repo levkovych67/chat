@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Find users by a partial username match
     List<User> findByUsernameContaining(String usernameSubstring);
 
-    Optional<User> findByTelegramId(Long telegramId);
+    Optional<User> findByTelegramId(String telegramId);
 
     // Find users in a specific chat room
     @Query("SELECT u FROM User u JOIN u.chatRooms cr WHERE cr.id = :chatRoomId")
@@ -33,4 +33,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Count users in a specific chat room
     @Query("SELECT COUNT(u) FROM User u JOIN u.chatRooms cr WHERE cr.id = :chatRoomId")
     long countByChatRoomId(@Param("chatRoomId") Long chatRoomId);
+
+
+    @Query("SELECT DISTINCT u FROM User u " +
+            "LEFT JOIN u.chatRooms cr " +
+            "WHERE u.chatRooms IS EMPTY " +
+            "OR (SIZE(cr.users) = 1)")
+    List<User> findUsersWithoutChatRoomsOrInSingleUserChatRooms();
 }

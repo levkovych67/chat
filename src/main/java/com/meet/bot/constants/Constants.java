@@ -9,6 +9,8 @@ public class Constants {
 
 
     public static final String START = "/start";
+    public static final String NEW_CHAT = "/new_chat";
+
     public static final String ME = "/me";
 
 
@@ -21,11 +23,14 @@ public class Constants {
 
     public static final String AND_SEPARATOR = " і ";
     public static final String PEOPLE_IN_CHAT = "В чаті %s, ти - %s";
+    public static final String PEOPLE_LEFT_CHAT = "Співрозмовник залишив чат, шукаємо нового";
     public static final String TEST = "TEST";
 
 
 
     public static final String HI = "Привіт, тебе зареєстровано, твоє імя: ";
+    public static final String BOT_BLOCKED = "bot was blocked by the user";
+    public static final String CALL_ADMIN = "/admin";
 
-    public static String BOHDAN_ID = "123";
+    public static String BOHDAN_ID = "475949588L";
 }

@@ -69,7 +69,7 @@ public class TelegramToDomainMapper {
     private static User telegramUserToDomain(org.telegram.telegrambots.meta.api.objects.User  user) {
         if (user != null) {
             User systemUser = new User();
-            systemUser.setTelegramId(user.getId());
+            systemUser.setTelegramId(String.valueOf(user.getId()));
             systemUser.setUsername("@" + user.getUserName());
             systemUser.setFirstName(user.getFirstName());
             systemUser.setFirstName(user.getFirstName());

@@ -9,11 +9,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-
-import static org.hibernate.annotations.UuidGenerator.Style.RANDOM;
 
 @Service
 public class ChatRoomServiceImpl implements ChatRoomService {
@@ -27,7 +26,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
-    public ChatRoom createChatRoom(String name, Set<User> users) {
+    public ChatRoom createOrFindChatRoomForUser(String name, Set<User> users) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setName(name);
         chatRoom.setUsers(users);
@@ -44,16 +43,20 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         chatRoomRepository.save(chatRoom);
     }
 
+    public void deleteChatRoom(ChatRoom chatRoom) {
+        chatRoomRepository.delete(chatRoom);
+    }
+
     @Override
     public ChatRoom createOrGetChatRoom(User user) {
         if (CollectionUtils.isEmpty(user.getChatRooms())) {
             List<ChatRoom> chatRoomsWithUserCountOne = findChatRoomsWithUserCountOne();
-
             if (CollectionUtils.isEmpty(chatRoomsWithUserCountOne)) {
-                return createChatRoom(
+                return createOrFindChatRoomForUser(
                         ChatroomNameGenerator.generateRandomChatroomName(),
                         Set.of(user));
             } else {
+                Collections.shuffle(chatRoomsWithUserCountOne);
                 ChatRoom chatRoom = chatRoomsWithUserCountOne.get(0);
                 addUserToChatRoom(chatRoom, user);
                 return chatRoom;
@@ -65,6 +68,45 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         }
     }
 
+    public Optional<ChatRoom> findChatRoomByUser(User user) {
+        List<ChatRoom> chatRoomsByUser = findChatRoomsByUser(user);
+        if (CollectionUtils.isEmpty(chatRoomsByUser)) {
+            return Optional.empty();
+        } else {
+            if (chatRoomsByUser.size() > 1) {
+                throw new RuntimeException("User " + user.getTelegramId() + " has more than 1 room");
+            }
+            return Optional.of(chatRoomsByUser.get(0));
+        }
+    }
+
+    public ChatRoom createOrFindChatRoomForUser(User user) {
+        List<ChatRoom> chatRoomsWithUserCountOne = findChatRoomsWithUserCountOne();
+
+        if (CollectionUtils.isEmpty(chatRoomsWithUserCountOne)) {
+            return createOrFindChatRoomForUser(
+                    ChatroomNameGenerator.generateRandomChatroomName(),
+                    Set.of(user));
+        } else {
+            Collections.shuffle(chatRoomsWithUserCountOne);
+            ChatRoom chatRoom = chatRoomsWithUserCountOne.get(0);
+            addUserToChatRoom(chatRoom, user);
+            return chatRoom;
+        }
+    }
+
+    @Override
+    public void deleteChatRooms(Set<ChatRoom> rooms) {
+//        for (ChatRoom chatRoom :rooms) {
+//            Set<User> users = chatRoom.getUsers();
+//            for (User user : users) {
+//                removeUserFromChatRoom(chatRoom,user);
+//            }
+//        }
+        for (ChatRoom chatRoom : rooms) {
+            deleteChatRoom(chatRoom);
+        }
+    }
 
 
     public List<ChatRoom> findChatRoomsWithUserCountOne() {
